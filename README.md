@@ -66,6 +66,7 @@
   - 传入参数的引用&（修改结果要带回来 int test(int& x)）
   - 关键字sizeof(elem)可知元素大小
   - typedef 数据类型 别名
+  - 函数封装：避免重复代码，简洁易维护
 - 顺序表：用顺序存储方式来实现的线性表
   - 把逻辑上相邻的元素存储在物理位置上也相邻的存储单元中
   - 静态分配：
@@ -91,9 +92,66 @@
     - LNode *L; /Linklist L; （声明一个指向单链表第一个结点的指针）
     -两种实现：
      - 不带头结点：空表判断L==NULL
+       - 按位序插入
+         ```cpp
+         // 由于不带头结点，需要在i==1的情况下特殊处理，更改头指针L，其余操作不变
+         if(i==1){
+            s->data=e;
+            s->next=L;
+            L=s;
+          }
+         ```
      - 带头结点：空表判断L->next==NULL
        - 按位序插入
-    - 
+          ```cpp
+          struct LNode {  
+              int data;  
+              LNode* next;  
+          };  
+  
+          typedef LNode* Linklist;  
+  
+          bool ListInsert(Linklist &L, int i, int e) {  
+              if (i < 1) return false;  
+              LNode *p = L, *s = new LNode;  // 分配新节点  
+              int j = 0;  // 从0开始计数  
+  
+              // 查找第i-1个节点  
+              while (p != NULL && j < i - 1) {  
+                  p = p->next;  
+                  j++;  
+              }  
+  
+              if (p == NULL) return false;  // i超出链表长度  
+  
+              s->data = e;  
+              s->next = p->next;  
+              p->next = s;  
+  
+              // 如果i是1，则新节点成为头节点，但这里不需要特殊处理，因为L未改变  
+              // 注意：由于L是按引用传递，如果确实需要更新头节点（虽然在这个函数中不需要），  
+              // 可以这样做，但外部调用者需要相应地更新其头节点指针。  
+  
+              return true;  
+          }
+          ```
+        - 指定结点的前插操作：在p后插入s，将s覆盖为p，改p的值为e（重要应用：链表的逆置）
+        - 指定结点的删除：
+            ```cpp
+            // 找到p的下一个，将p覆盖为q，删掉q
+            q=new LNode;
+            q=p->next;
+            p->data=q->data;
+            p->next=q->next;
+            delete q;
+            ```
+        - 按位查找：联系上面两种方法，先查询第i-1个，然后尾插
+        - 建立单链表：
+          - 头插法建立单链表
+            - 初始化设置头结点为NULL：L->next=NULL;且后面要更新头结点
+          - 后插法建立单链表
+    - 双链表：
+      -  
 
 
 ---
